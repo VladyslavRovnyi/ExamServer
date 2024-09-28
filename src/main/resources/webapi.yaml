@@ -1,0 +1,400 @@
+openapi: 3.0.1
+info:
+  title: Taskly
+  description: API for creating and managing to-do lists
+  version: 1.0.0
+  x-authors:
+    - Student 1
+    - Student 2
+    - Student 3
+    - etc
+
+servers:
+  - url: http://localhost:8080/
+    description: Local development
+# Vert.x bug:
+# Never uncommented production URL, unless for testing production environment from the local machine
+# The program will not work if the production URL is uncommented
+#  - url: https://project-2.ti.howest.be/2024-2025/group-00/
+#    description: Production
+
+paths:
+  /api/todolists:
+    post:
+      summary: Create a new empty to-do list
+      description: Creates a new to-do list for the specified user with an optional title.
+      operationId: createTodoList
+      tags:
+        - TodoList
+      requestBody:
+        description: Data required to create a new to-do list
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateTodoListRequest"
+      responses:
+        "201":
+          description: To-do list created successfully
+          headers:
+            Location:
+              description: URL of the newly created to-do list
+              schema:
+                type: string
+                format: uri
+        "400":
+          description: Invalid input or missing required fields
+        "500":
+          description: Internal server error
+  /api/todolists/{userId}/trash:
+    get:
+      summary: Get all to-do lists in the trash
+      description: Retrieves all to-do lists that are in the trash for the specified user.
+      operationId: allTrashedTodoListsByUser
+      tags:
+        - TodoList
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          description: The ID of the user whose trash to-do lists will be retrieved
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: To-do lists in the trash retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/TodoList"
+        "404":
+          description: No to-do lists found in the trash
+        "500":
+          description: Internal server error
+
+  /api/todolists/{userId}/{todoListId}:
+    get:
+      summary: Get a to-do list by ID
+      description: Retrieves the details of a to-do list by its unique identifier.
+      operationId: todoListByIdAndUserId
+      tags:
+        - TodoList
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          description: The ID of the user who owns the to-do list
+          schema:
+            type: string
+            format: uuid
+        - name: todoListId
+          in: path
+          required: true
+          description: The ID of the to-do list to retrieve
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: To-do list retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TodoList"
+        "404":
+          description: To-do list not found
+        "500":
+          description: Internal server error
+
+  /api/todolists/{todoListId}/items:
+    post:
+      summary: Add a new item to a to-do list
+      description: Adds a new item with a description and optional deadline to the specified to-do list.
+      operationId: addTodoItem
+      tags:
+        - TodoList
+      parameters:
+        - name: todoListId
+          in: path
+          required: true
+          description: The ID of the to-do list to which the item will be added
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        description: Data required to add a new item to the to-do list
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AddTodoItemRequest"
+      responses:
+        "201":
+          description: Todo item added successfully
+          headers:
+            Location:
+              description: URL of the newly added to-do item
+              schema:
+                type: string
+                format: uri
+        "400":
+          description: Invalid input or missing required fields
+        "404":
+          description: To-do list not found
+        "500":
+          description: Internal server error
+  /api/todolists/{sourceListId}/items/{itemId}/move:
+    post:
+      summary: Move a to-do item to another list
+      description: Moves a to-do item from one list to another.
+      operationId: moveTodoItemToOtherList
+      tags:
+        - TodoList
+      parameters:
+        - name: sourceListId
+          in: path
+          required: true
+          description: The ID of the to-do list that contains the item
+          schema:
+            type: string
+            format: uuid
+        - name: itemId
+          in: path
+          required: true
+          description: The ID of the to-do item to move
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        description: Data required to move a to-do item to another list
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                targetListId:
+                  type: string
+                  description: The ID of the destination to-do list
+                  format: uuid
+      responses:
+        "204":
+          description: To-do item moved successfully
+        "404":
+          description: To-do list or item not found
+        "500":
+          description: Internal server error
+
+  /api/todolists/{todoListId}/items/{todoItemId}:
+    put:
+      summary: Marking a to-do item as done
+      description: Marks a to-do item as done by setting the isDone flag to true.
+      operationId: markTodoItemAsDone
+      tags:
+        - TodoList
+      parameters:
+        - name: todoListId
+          in: path
+          required: true
+          description: The ID of the to-do list that contains the item
+          schema:
+            type: string
+            format: uuid
+        - name: todoItemId
+          in: path
+          required: true
+          description: The ID of the to-do item to mark as done
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "204":
+          description: To-do item marked as done successfully
+        "404":
+          description: To-do list or item not found
+        "500":
+          description: Internal server error
+  /api/users:
+    post:
+      summary: Create a new user
+      description: Creates a new user with a unique identifier.
+      operationId: createUser
+      tags:
+        - User
+      requestBody:
+        description: Data required to create a new user
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateUserRequest"
+      responses:
+        "201":
+          description: User created successfully
+          headers:
+            Location:
+              description: URL of the newly created user
+              schema:
+                type: string
+                format: uri
+        "400":
+          description: Invalid input or missing required fields
+        "500":
+          description: Internal server error
+
+  /api/health:
+    get:
+      summary: Health check
+      description: Check the health of the application
+      operationId: healthCheck
+      tags:
+        - Health
+      responses:
+        "200":
+          description: Application is healthy
+        "500":
+          description: Application is unhealthy
+
+  /api/subscribe:
+    post:
+      summary: Subscribe to notifications
+      description: Subscribe to receive notifications about to-do list updates.
+      operationId: subscribe
+      tags:
+        - Notifications
+      requestBody:
+        description: Data required to subscribe to notifications
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                endpoint:
+                  type: string
+                  description: URL to receive notifications
+                keys:
+                  type: object
+                  properties:
+                    p256dh:
+                      type: string
+                      description: Public key for encryption
+                    auth:
+                      type: string
+                      description: Authentication secret
+      responses:
+        "201":
+          description: Subscription successful
+        "400":
+          description: Invalid input or missing required fields
+        "500":
+          description: Internal server error
+
+components:
+  schemas:
+    CreateTodoListRequest:
+      type: object
+      properties:
+        userId:
+          type: string
+          description: Unique identifier of the user
+          format: uuid
+        title:
+          type: string
+          description: Optional title for the to-do list
+      required:
+        - userId
+      example:
+        userId: "550e8400-e29b-41d4-a716-446655440000"
+        title: "Weekend Tasks"
+
+    AddTodoItemRequest:
+      type: object
+      properties:
+        description:
+          type: string
+          description: Description of the to-do item
+        deadlineDate:
+          type: string
+          pattern: "^\\d{2}-\\d{2}-\\d{4}$"
+          description: Optional deadline for the to-do item. Format (dd-MM-YYYY)
+      required:
+        - description
+      example:
+        description: "Buy groceries"
+        deadlineDate: "2024-09-15"
+
+    CreateUserRequest:
+      type: object
+      properties:
+        userName:
+          type: string
+          description: Name of the user
+      required:
+        - userName
+      example:
+        userName: "John Doe"
+
+    TodoList:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: "Unique identifier for the TodoList"
+        title:
+          type: string
+          description: "Title of the TodoList"
+        isInTrash:
+          type: boolean
+          description: "Indicates if the TodoList is in trash"
+        user:
+          $ref: '#/components/schemas/User'
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/TodoItem'
+      example:
+        id: "550e8400-e29b-41d4-a716-446655440000"
+        title: "Weekend Tasks"
+        isInTrash: false
+        user: 
+          id: "550e8400-e29b-41d4-a716-446655440000"
+          username: "John Doe"
+        items:
+          - id: "550e8400-e29b-41d4-a716-446655440000"
+            description: "Buy groceries"
+            deadlineDate: "2024-09-15"
+            isDone: false
+          - id: "550e8400-e29b-41d4-a716-446655440001"
+            description: "Clean the house"
+            deadlineDate: "2024-09-16"
+            isDone: false
+
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: "Unique identifier for the User"
+        username:
+          type: string
+          description: "Username of the User"
+
+    TodoItem:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: "Unique identifier for the Todo item"
+        description:
+          type: string
+          description: "Description of the Todo item"
+        deadlineDate:
+          type: string
+          format: date
+          description: "Deadline date of the Todo item"
+        isDone:
+          type: boolean
+          description: "Indicates if the Todo item is completed"
+          

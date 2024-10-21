@@ -33,7 +33,6 @@ public class VapidKeys {
                 LOGGER.severe("Failed to generate VAPID keys: " + e.getMessage());
                 throw new IllegalArgumentException("Failed to generate VAPID keys", e);
             } catch (NoSuchProviderException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
         }

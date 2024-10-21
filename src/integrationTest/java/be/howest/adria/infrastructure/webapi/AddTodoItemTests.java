@@ -50,7 +50,6 @@ class AddTodoItemTests {
         HttpResponse<String> todoListReponse = TestExampleRequests.todoListByIdAndUserId(todoListId, userId);
         WebApiTestUtils.assertOk(todoListReponse);
         JsonObject todoList = new Gson().fromJson(todoListReponse.body(), JsonObject.class);
-        System.out.println(todoList);
         assertEquals(todoListId, todoList.get("id").getAsString());
         assertEquals(userId, todoList.getAsJsonObject("user").get("id").getAsString());
         assertEquals("My todo list", todoList.get("title").getAsString());

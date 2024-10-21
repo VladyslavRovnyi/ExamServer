@@ -15,7 +15,10 @@ import java.io.IOException;
 import java.security.GeneralSecurityException;
 import nl.martijndwars.webpush.Notification;
 import nl.martijndwars.webpush.PushService;
+
 import org.jose4j.lang.JoseException;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import java.security.Security;
 
 import java.util.logging.*;
 
@@ -25,6 +28,10 @@ public class PushServer implements EventNotifier {
     private SubscriptionDb subscriptionDb;
     private final PushService pushService;
     private Gson gson = new GsonBuilder().create();
+    
+    static {
+        Security.addProvider(new BouncyCastleProvider());
+    }
 
     public static PushServer initialize(PushService pushService, SubscriptionDb subscriptionDb) {
         if (instance != null)
@@ -37,7 +44,6 @@ public class PushServer implements EventNotifier {
     public static PushServer instance() {
         if (instance == null)
             throw new IllegalStateException("PushServer is not initialized");
-
         return instance;
     }
 

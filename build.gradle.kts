@@ -45,7 +45,6 @@ dependencies {
     implementation("nl.martijndwars:web-push:5.1.0")
     implementation("org.bouncycastle:bcprov-jdk15on:1.70")
     implementation("com.fasterxml.jackson.core:jackson-databind:2.13.3")
-    testImplementation("org.bouncycastle:bcprov-jdk15on:1.70")
     testImplementation("io.vertx:vertx-junit5")
     testImplementation("org.bouncycastle:bcprov-jdk15on:1.70")
     testImplementation("org.junit.jupiter:junit-jupiter:$junitJupiterVersion")

@@ -271,15 +271,15 @@ paths:
                 endpoint:
                   type: string
                   description: URL to receive notifications
-                keys:
-                  type: object
-                  properties:
-                    p256dh:
-                      type: string
-                      description: Public key for encryption
-                    auth:
-                      type: string
-                      description: Authentication secret
+                  example: "https://example.com/notifications"
+                p256dh:
+                  type: string
+                  description: Public key for encryption
+                  example: "BGXO1ZjThYApWGlePtX5N1UTyZYVP2XQSXqLTuVLyYtupdMsimfiDeJzBfZ_kzq2cu3woewdZobTlm3VxoJpZ4g"
+                auth:
+                  type: string
+                  description: Authentication secret (random base64 of 16 bytes)
+                  example: "GE17mCF1OoRJMBVC810t7g"
       responses:
         "201":
           description: Subscription successful

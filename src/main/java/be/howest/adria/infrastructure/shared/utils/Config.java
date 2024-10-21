@@ -28,7 +28,7 @@ public class Config {
   }
 
   public String readSetting(String key) {
-    return readSetting(key, null);
+    return readSetting(key,"");
   }
 
   public Map<String, String> readSettingsStartingWith(String prefix) {

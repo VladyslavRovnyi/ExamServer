@@ -17,6 +17,7 @@ public class SubscriptionDbImpl implements SubscriptionDb {
 
     public SubscriptionDbImpl(String dbPath) {
         this.dbPath = dbPath;
+        initFileDb();
     }
 
     @SuppressWarnings("unchecked")
@@ -41,4 +42,12 @@ public class SubscriptionDbImpl implements SubscriptionDb {
         }
     }
 
+    private void initFileDb() {
+        try (FileInputStream fileIn = new FileInputStream(dbPath);
+                ObjectInputStream in = new ObjectInputStream(fileIn)) {
+            in.readObject();
+        } catch (IOException | ClassNotFoundException e) {
+            saveSubscriptions(new ArrayList<>());
+        }
+    }
 }

@@ -9,11 +9,14 @@ import be.howest.adria.infrastructure.pushnotifications.server.VapidKeys;
 import be.howest.adria.infrastructure.shared.utils.Config;
 import nl.martijndwars.webpush.PushService;
 
+import java.io.IOException;
+import java.nio.file.*;
+
 public class PushNotificationModule {
 
-    public static void init(Config config) {
-        String vapidKeysFile = config.readSetting("pushnotifications.vapidkeys.path");
-        KeyPair vapidKeys = VapidKeys.generate(vapidKeysFile);
+    public static void init(Config config) throws IOException {
+        String vapidKeysPath = config.readSetting("pushnotifications.vapidkeys.path");
+        KeyPair vapidKeys = VapidKeys.load(vapidKeysPath);
         PushService pushService = new PushService()
                 .setSubject("mailto:your-email@example.com") // Challenge: this should be a configuration value
                 .setPublicKey(vapidKeys.getPublic())

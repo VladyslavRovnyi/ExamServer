@@ -8,6 +8,7 @@ import java.io.ObjectOutputStream;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
 import java.util.logging.Logger;
 
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
@@ -20,20 +21,24 @@ public class VapidKeys {
         Security.addProvider(new BouncyCastleProvider());
     }
 
-    public static KeyPair generate(String vapidKeysPath) {
+    public static KeyPair load(String vapidKeysPath) {
         KeyPair keyPair = readKeyPair(vapidKeysPath);
         if (keyPair == null) {
             try {
-                KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("EC");
+                KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("EC", "BC");
                 keyPairGenerator.initialize(256);
                 keyPair = keyPairGenerator.generateKeyPair();
                 saveKeyPair(vapidKeysPath, keyPair);
             } catch (NoSuchAlgorithmException | IllegalStateException e) {
                 LOGGER.severe("Failed to generate VAPID keys: " + e.getMessage());
                 throw new IllegalArgumentException("Failed to generate VAPID keys", e);
+            } catch (NoSuchProviderException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
             }
         }
         return keyPair;
+
     }
 
     private static void saveKeyPair(String keyPairPath, KeyPair keyPair) {

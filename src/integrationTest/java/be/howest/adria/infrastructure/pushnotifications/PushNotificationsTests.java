@@ -36,6 +36,9 @@ import nl.martijndwars.webpush.PushService;
 import be.howest.adria.infrastructure.pushnotifications.database.SubscriptionDb;
 import be.howest.adria.infrastructure.pushnotifications.database.SubscriptionDbImpl;
 
+import java.nio.file.Files;
+import java.nio.file.Paths;
+
 class PushNotificationTests {
 
     private static MockPushService mockPushService;
@@ -43,11 +46,12 @@ class PushNotificationTests {
     private String validP256dh;
 
     @BeforeEach
-    void setUp() {
+    void setUp() throws IOException {
         Config config = new Config("/config/config.properties");
         SubscriptionDb subscriptionDb = new SubscriptionDbImpl(
                 config.readSetting("pushnotifications.subscriptions.db.path"));
         mockPushService = new MockPushService();
+        Files.deleteIfExists(Paths.get(config.readSetting("pushnotifications.vapidkeys.path")));
         PushServer.initialize(mockPushService, subscriptionDb);
         WebApiTestUtils.waitForServer(API_URL_HEALTH_CHECK);
     }
@@ -64,7 +68,7 @@ class PushNotificationTests {
         generateClientKeys();
 
         // Subscribe to notifications endpoint
-        Subscription subscription = new Subscription(API_URL_HEALTH_CHECK, validP256dh, validAuth);
+        Subscription subscription = Subscription.create(API_URL_HEALTH_CHECK, validP256dh, validAuth);
         String subscriptionJson = gson.toJson(subscription);
         HttpResponse<String> subscribeResponse = TestExampleRequests.subscribe(subscriptionJson);
         WebApiTestUtils.assertCreated(subscribeResponse);

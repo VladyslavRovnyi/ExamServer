@@ -9,7 +9,7 @@ public class JdbcConnection {
   private static JdbcConnection instance;
   private final String url;
 
-  public JdbcConnection(String url) {
+  private JdbcConnection(String url) {
     this.url = url;
   }
 

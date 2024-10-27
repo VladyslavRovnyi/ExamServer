@@ -38,7 +38,7 @@ public class CreateTodoList implements UseCase<CreateTodoListInput> {
 
         todoListRepository.save(todoList);
 
-        eventNotifier.publish(String.format("TodoListCreated,title:{%s},id:{%s}", todoList.title(), todoList.id()));
+     //   eventNotifier.publish(String.format("TodoListCreated,title:{%s},id:{%s}", todoList.title(), todoList.id()));
 
         outputPort.present(new CreateTodoListOutput(todoList.id()));
     }

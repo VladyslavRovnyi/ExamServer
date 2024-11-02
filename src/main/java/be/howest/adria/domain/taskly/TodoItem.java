@@ -7,6 +7,7 @@ public class TodoItem {
   private final String description;
   private final Deadline deadline;
   private boolean isDone = false;
+  private boolean isFavorite = false; // New favorite field
 
   public static TodoItem create(UUID id, String description, Deadline deadline) {
     validateDescription(description);
@@ -46,6 +47,15 @@ public class TodoItem {
 
   public void delayDeadline(Deadline newDeadline) {
     deadline.update(newDeadline);
+  }
+
+  // Method to toggle favorite status
+  public void toggleFavorite() {
+    isFavorite = !isFavorite;
+  }
+
+  public boolean isFavorite() {
+    return isFavorite;
   }
 
   private static void validateDescription(String description) {

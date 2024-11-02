@@ -18,17 +18,17 @@ public class TodoList {
   private boolean isInTrash;
 
   public static TodoList create(
-      UUID id,
-      User user,
-      String title,
-      boolean isInTrash,
-      List<TodoItem> items) {
+          UUID id,
+          User user,
+          String title,
+          boolean isInTrash,
+          List<TodoItem> items) {
     return new TodoList(id, user, title, isInTrash, items);
   }
 
   public static TodoList create(
-      User user,
-      String title) {
+          User user,
+          String title) {
     UUID id = UUID.randomUUID();
     boolean isInTrash = false;
     List<TodoItem> items = new ArrayList<>();
@@ -36,11 +36,11 @@ public class TodoList {
   }
 
   private TodoList(
-      UUID id,
-      User user,
-      String title,
-      boolean isInTrash,
-      List<TodoItem> items) {
+          UUID id,
+          User user,
+          String title,
+          boolean isInTrash,
+          List<TodoItem> items) {
     this.id = id;
     this.user = user;
     this.title = title;
@@ -70,10 +70,10 @@ public class TodoList {
 
   public void markTodoItemAsDone(UUID itemId) {
     TodoItem item = items
-        .stream()
-        .filter(todoItem -> todoItem.id().equals(itemId))
-        .findFirst()
-        .orElseThrow();
+            .stream()
+            .filter(todoItem -> todoItem.id().equals(itemId))
+            .findFirst()
+            .orElseThrow();
 
     if (item.isDone())
       throw new TasklyException("The todo item is already done.");
@@ -83,8 +83,8 @@ public class TodoList {
 
   public boolean hasUnfinishedItems() {
     return items
-        .stream()
-        .anyMatch(todoItem -> !todoItem.isDone());
+            .stream()
+            .anyMatch(todoItem -> !todoItem.isDone());
   }
 
   public void moveToTrash() {
@@ -98,18 +98,27 @@ public class TodoList {
 
     if (newDeadline.isBefore(todoItem.deadline()))
       throw new IllegalArgumentException(
-          "The new deadline should be after the current deadline."
-              + " Current deadline: " + todoItem.deadline()
-              + " New deadline: " + newDeadline);
+              "The new deadline should be after the current deadline."
+                      + " Current deadline: " + todoItem.deadline()
+                      + " New deadline: " + newDeadline);
 
     todoItem.delayDeadline(newDeadline);
   }
 
+  // Method to mark a TodoItem as favorite
+  public void markTodoItemAsFavorite(UUID itemId) {
+    TodoItem item = items.stream()
+            .filter(todo -> todo.id().equals(itemId))
+            .findFirst()
+            .orElseThrow(() -> new NoSuchElementException("Todo item not found in the list"));
+    item.toggleFavorite();
+  }
+
   private Optional<TodoItem> findTodoItem(UUID todoItemId) {
     return items
-        .stream()
-        .filter(todoItem -> todoItem.id().equals(todoItemId))
-        .findFirst();
+            .stream()
+            .filter(todoItem -> todoItem.id().equals(todoItemId))
+            .findFirst();
   }
 
   public boolean isInTrash() {

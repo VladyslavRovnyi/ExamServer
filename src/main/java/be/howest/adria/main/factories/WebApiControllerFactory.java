@@ -26,6 +26,8 @@ import be.howest.adria.infrastructure.webapi.responsehandlers.CreateTodoListResp
 import be.howest.adria.infrastructure.webapi.responsehandlers.CreateUserResponseHandler;
 import be.howest.adria.infrastructure.webapi.responsehandlers.TodoListByIdAndUserIdResponseHandler;
 import be.howest.adria.infrastructure.webapi.shared.Request;
+import be.howest.adria.application.taskly.MarkTodoItemAsFavorite;
+import be.howest.adria.infrastructure.webapi.controllers.MarkTodoItemAsFavoriteController;
 import io.vertx.ext.web.RoutingContext;
 
 public class WebApiControllerFactory {
@@ -52,6 +54,8 @@ public class WebApiControllerFactory {
                 return createTodoListByIdAndUserIdController(ctx);
             case "markTodoItemAsDone":
                 return createMarkTodoItemAsDoneController();
+            case "markTodoItemAsFavorite": // New case for MarkTodoItemAsFavoriteController
+                return createMarkTodoItemAsFavoriteController();
             default:
                 throw new IllegalArgumentException("Unknown operationId: " + operationId);
         }
@@ -93,4 +97,10 @@ public class WebApiControllerFactory {
         MarkTodoItemAsDone useCase = new MarkTodoItemAsDone(todoListRepository);
         return new MarkTodoItemAsDoneController(useCase);
     }
+
+    private MarkTodoItemAsFavoriteController createMarkTodoItemAsFavoriteController() {
+        MarkTodoItemAsFavorite useCase = new MarkTodoItemAsFavorite(todoListRepository);
+        return new MarkTodoItemAsFavoriteController(useCase);
+    }
+
 }

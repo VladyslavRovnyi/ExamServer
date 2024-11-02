@@ -19,6 +19,46 @@ servers:
 #    description: Production
 
 paths:
+  /api/todolists/{todoListId}/items/{todoItemId}/favorite:
+    post:
+      summary: Mark a to-do item as favorite
+      description: Marks a specific to-do item as a favorite.
+      operationId: markTodoItemAsFavorite
+      tags:
+        - TodoList
+      parameters:
+        - name: todoListId
+          in: path
+          required: true
+          description: The ID of the to-do list that contains the item
+          schema:
+            type: string
+            format: uuid
+        - name: todoItemId
+          in: path
+          required: true
+          description: The ID of the to-do item to mark as favorite
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: Todo item marked as favorite successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Todo item marked as favorite"
+        "400":
+          description: Invalid input or missing required fields
+        "404":
+          description: To-do list or item not found
+        "500":
+          description: Internal server error
+
   /api/todolists:
     post:
       summary: Create a new empty to-do list

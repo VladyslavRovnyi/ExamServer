@@ -35,15 +35,15 @@ public class SqliteTodoListRepository implements TodoListRepository {
             """;
 
     private static final String QRY_INSERT_TODOLIST_ITEM = """
-            INSERT INTO todo_items (id, todo_list_id, description, deadline_date, is_done, status)
-            VALUES (?, ?, ?, ?, ?, ?);
+            INSERT INTO todo_items (id, todo_list_id, description, deadline_date, is_done, is_favorite, status)
+            VALUES (?, ?, ?, ?, ?, ?, ?);
             """;
 
     private static final String QRY_BY_ID = """
             SELECT u.id AS user_id, u.username, tl.id AS todo_list_id, tl.title AS todo_list_title,
                    tl.is_in_trash AS todo_list_is_in_trash, ti.id AS todo_item_id,
                    ti.description AS todo_item_description, ti.deadline_date AS todo_item_deadline_date,
-                   ti.is_done AS todo_item_is_done
+                   ti.is_done AS todo_item_is_done, ti.is_favorite AS todo_item_is_done
             FROM users u
             LEFT JOIN todo_lists tl ON u.id = tl.user_id
             LEFT JOIN todo_items ti ON tl.id = ti.todo_list_id
@@ -160,7 +160,8 @@ public class SqliteTodoListRepository implements TodoListRepository {
                     insertTodoItemStatement.setString(3, item.description());
                     insertTodoItemStatement.setDate(4, java.sql.Date.valueOf(item.deadline().date()));
                     insertTodoItemStatement.setBoolean(5, item.isDone());
-                    insertTodoItemStatement.setString(6, item.deadline().status().toString());
+                    insertTodoItemStatement.setBoolean(6, item.isFavorite());
+                    insertTodoItemStatement.setString(7, item.deadline().status().toString());
                     insertTodoItemStatement.addBatch();
                 }
                 insertTodoItemStatement.executeBatch();

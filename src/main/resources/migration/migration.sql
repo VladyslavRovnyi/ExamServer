@@ -23,5 +23,6 @@ CREATE TABLE todo_items
   deadline_date  DATE,
   status        VARCHAR,
   is_done       BOOLEAN NOT NULL,
+  is_favorite   BOOLEAN NOT NULL,
   todo_list_id  VARCHAR NOT NULL
 );

@@ -21,6 +21,7 @@ public class TodoListMapper implements ResultSetMapper<TodoList> {
     private static final String TODO_ITEM_ID = "todo_item_id";
     private static final String TODO_ITEM_DESCRIPTION = "todo_item_description";
     private static final String TODO_ITEM_DEADLINE_DATE = "todo_item_deadline_date";
+    private static final String TODO_ITEM_IS_FAVORITE = "todo_item_is_favorite";
 
     @Override
     public TodoList map(ResultSet resultSet) throws SQLException {
@@ -59,9 +60,12 @@ public class TodoListMapper implements ResultSetMapper<TodoList> {
         int month = deadline.getMonthValue();
         int year = deadline.getYear();
 
+        boolean favorite = resultSet.getBoolean(TODO_ITEM_IS_FAVORITE);
+
         return TodoItem.create(
                 UUID.fromString(todoItemId),
                 resultSet.getString(TODO_ITEM_DESCRIPTION),
-                Deadline.create(day, month, year));
+                Deadline.create(day, month, year),
+                favorite);
     }
 }

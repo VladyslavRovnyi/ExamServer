@@ -35,7 +35,7 @@ public class Seeder {
         String todoList2Name = "Todo List 2";
 
         // Create 3 users
-        User user1 = User.create(UUID.randomUUID(), "John Doe");
+        User user1 = User.create(UUID.fromString("e52e14b4-3f80-4fa8-b77c-0c1ac85ba697"), "John Doe");
         User user2 = User.create(UUID.randomUUID(), "Jane Woke");
         User user3 = User.create(UUID.randomUUID(), "Jack Black");
         

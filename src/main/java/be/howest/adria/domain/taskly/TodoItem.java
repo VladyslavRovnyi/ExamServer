@@ -9,9 +9,14 @@ public class TodoItem {
   private boolean isDone = false;
   private boolean isFavorite = false; // New favorite field
 
+  public static TodoItem create(UUID id, String description, Deadline deadline, boolean isFavorite) {
+    validateDescription(description);
+    return new TodoItem(id, description, deadline, isFavorite);
+  }
+
   public static TodoItem create(UUID id, String description, Deadline deadline) {
     validateDescription(description);
-    return new TodoItem(id, description, deadline);
+    return new TodoItem(id, description, deadline, false);
   }
 
   public static TodoItem create(String description, Deadline deadline) {
@@ -19,10 +24,11 @@ public class TodoItem {
     return create(UUID.randomUUID(), description, deadline);
   }
 
-  private TodoItem(UUID id, String description, Deadline deadline) {
+  private TodoItem(UUID id, String description, Deadline deadline, boolean isFavorite) {
     this.id = id;
     this.description = description;
     this.deadline = deadline;
+    this.isFavorite = isFavorite;
   }
 
   public String description() {
